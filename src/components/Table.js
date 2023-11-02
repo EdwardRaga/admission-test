@@ -21,6 +21,13 @@ import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
+import CustomizedDialogs from "./Dialog";
+
+
+import StandardImageList from "./ImageList";
+import Text from "./Text";
+import Select from "./Select";
+import PokemonForm from "./PokemonForm";
 
 function createData(name, calories, fat, carbs, protein) {
   return {
@@ -256,6 +263,9 @@ export default function EnhancedTable(props) {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
+  const [open,setOpen] = React.useState(false);
+  const [selectedPokemon,setSelectedPokemon] = React.useState(null);
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -273,7 +283,7 @@ export default function EnhancedTable(props) {
 
   React.useEffect(() => {}, [JSON.stringify(rowsProp)]);
 
-  const handleClick = (event, name) => {
+  const handleClick = (event, name, pokemon) => {
     const selectedIndex = selected.indexOf(name);
     let newSelected = [];
 
@@ -291,6 +301,7 @@ export default function EnhancedTable(props) {
     }
 
     setSelected(newSelected);
+    handleRowClick(pokemon)
   };
 
   const handleChangePage = (event, newPage) => {
@@ -304,6 +315,17 @@ export default function EnhancedTable(props) {
 
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
+  };
+
+  // Función para manejar el clic en una fila
+  const handleRowClick = (pokemon) => {
+    setSelectedPokemon(pokemon);
+    setOpen(true);
+  };
+
+  // Función para cerrar el diálogo
+  const handleClose = () => {
+    setOpen(false);
   };
 
   const isSelected = (name) => selected.indexOf(name) !== -1;
@@ -336,6 +358,11 @@ export default function EnhancedTable(props) {
               {stableSort(rows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
+                  //Images pokemon
+                  const { front_default } = row.sprites;
+
+                  const arrayPokemonsTypes = row.types;
+
                   const isItemSelected = isSelected(row.name);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
@@ -343,13 +370,14 @@ export default function EnhancedTable(props) {
                     <TableRow
                       hover
                       onClick={(event) => {
-                        handleClick(event, row.name);
+                        handleClick(event, row.name, row);
                       }}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
                       key={row.name}
                       selected={isItemSelected}
+                      style={{cursor: 'pointer'}}
                     >
                       <TableCell padding="checkbox">
                         <Checkbox color="primary" checked={isItemSelected} />
@@ -364,12 +392,29 @@ export default function EnhancedTable(props) {
                         scope="row"
                         padding="none"
                       >
-                        {row.name}
+                        {/* {row.name} */}
+                        <img src={front_default} />
                       </TableCell>
-                      <TableCell align="right">{row.calories}</TableCell>
+                      <TableCell align="left">{row.id}</TableCell>
+                      <TableCell align="left">{row.name}</TableCell>
+
+                      <TableCell align="left">
+                        <ul>
+                          {arrayPokemonsTypes.map(({ slot, type }, index) => (
+                            <li key={index}>{type.name}</li>
+                          ))}
+                        </ul>
+                      </TableCell>
+
+                      <TableCell align="left">amigos</TableCell>
+                      <TableCell align="left">{row.height}</TableCell>
+                      <TableCell align="left">{row.weight}</TableCell>
+                      <TableCell align="left">Descripcion</TableCell>
+
+                      {/* <TableCell align="right">{row.calories}</TableCell>
                       <TableCell align="right">{row.fat}</TableCell>
                       <TableCell align="right">{row.carbs}</TableCell>
-                      <TableCell align="right">{row.protein}</TableCell>
+                      <TableCell align="right">{row.protein}</TableCell> */}
                     </TableRow>
                   );
                 })}
@@ -395,6 +440,13 @@ export default function EnhancedTable(props) {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      {selectedPokemon && (
+        <CustomizedDialogs
+          open={open}
+          onClose={handleClose}
+          pokemon={selectedPokemon}
+        />
+      )}
       <FormControlLabel
         control={<Switch checked={dense} onChange={handleChangeDense} />}
         label="Dense padding"

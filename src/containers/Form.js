@@ -1,6 +1,7 @@
 import React from "react";
 import Text from "../components/Text";
 import Select from "../components/Select";
+import { ImageList } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // * use spritesTitles to set the titles to Images
@@ -18,7 +19,7 @@ const spriteTitles = {
 
 export default function Form(props) {
   const location = useLocation();
-  // * Use navigate to return root path
+//  * Use navigate to return root path
   const navigate = useNavigate();
   const { sprites, id_pokemon } = location.state;
 

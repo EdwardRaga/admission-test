@@ -4,8 +4,11 @@ import ImageListItem from "@mui/material/ImageListItem";
 import ImageListItemBar from "@mui/material/ImageListItemBar";
 
 export default function StandardImageList(props) {
-  const [selected, setSelected] = React.useState(defaultValue);
-  setSelected((st) => st + 1);
+  const [selected, setSelected] = React.useState(null);
+
+  const handleImageClick = (img)=>{
+    setSelected(img)
+  }
   return (
     <div style={{ display: "flex", justifyContent: "center" }}>
       <ImageList sx={{ width: 500, height: 450 }} cols={3} rowHeight={164}>
@@ -17,7 +20,8 @@ export default function StandardImageList(props) {
                 srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
                 alt={item.title}
                 loading="lazy"
-                // onClick={handleChange(item.img)}
+                onClick={() => handleImageClick(item.img)}
+                style={{ border: "3px solid red" }}
               />
               <ImageListItemBar title={item.title} subtitle={item.author} />
             </ImageListItem>

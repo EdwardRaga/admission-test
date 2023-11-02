@@ -48,34 +48,47 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default function CustomizedDialogs() {
-  const [open, setOpen] = React.useState(false);
+export default function CustomizedDialogs(props) {
+  // const [open, setOpen] = React.useState(props.open);
 
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
+  const {sprites} = props.pokemon;
+
+  const spritesOffNull = Object.keys(sprites).filter((property) =>sprites[property] !== null && typeof sprites[property] !== "object");
+
   const handleClose = () => {
-    setOpen(false);
+    props.onClose();
   };
 
   return (
     <div>
-      <Button variant="outlined" onClick={handleClickOpen}>
+      {/* <Button variant="outlined" onClick={handleClickOpen}>
         Open dialog
-      </Button>
+      </Button> */}
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
-        open={open}
+        open={props.open}
       >
         <BootstrapDialogTitle
           id="customized-dialog-title"
           onClose={handleClose}
         >
-          Modal title
+         {props.pokemon.name.toUpperCase()}
         </BootstrapDialogTitle>
         <DialogContent dividers>
-          <Typography gutterBottom>
+          {spritesOffNull.map((sprite)=>{
+
+           return(
+              <div key={sprite}>
+               <figure>
+                 <img src={sprites[sprite]}/>
+                 <figcaption>{sprite}</figcaption>
+               </figure>
+             </div>
+           )
+          })}
+          
+          {/* <Typography gutterBottom>
             Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
             dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta
             ac consectetur ac, vestibulum at eros.
@@ -89,7 +102,7 @@ export default function CustomizedDialogs() {
             Aenean lacinia bibendum nulla sed consectetur. Praesent commodo
             cursus magna, vel scelerisque nisl consectetur et. Donec sed odio
             dui. Donec ullamcorper nulla non metus auctor fringilla.
-          </Typography>
+          </Typography> */}
         </DialogContent>
         <DialogActions>
           <Button autoFocus onClick={handleClose}>

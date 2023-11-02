@@ -1,8 +1,19 @@
 import React from "react";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
+import debounce from "../utils/debounce";
 
-export default function Text() {
+export default function Text(props) {
+  const { label, helperText, multiline, rows, onChange } = props;
+  const [value, setValue] = React.useState("");
+
+   const handleChange = (event) => {
+     setValue(event.target.value);
+     if (onChange) {
+       onChange(event.target.value);
+     }
+   };
+
   return (
     <Box
       component="form"
@@ -15,15 +26,18 @@ export default function Text() {
       <div>
         <TextField
           // error
-          // id="standard-error-helper-text"
-          label="Error"
+          id="standard-error-helper-text"
+          label= {label}
           defaultValue="Hello World"
-          helperText="Incorrect entry."
+          helperText= {helperText}
           variant="standard"
-          // rows={5}
-          // multiline={true}
+          value={value}
+          rows={rows}
+           multiline={multiline}
+          onChange={handleChange}
         />
       </div>
     </Box>
+    
   );
 }

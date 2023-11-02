@@ -5,7 +5,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
+import MuiSelect from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 
 const ITEM_HEIGHT = 48;
@@ -18,6 +18,15 @@ const MenuProps = {
     },
   },
 };
+
+function getStyles(name, selectedOptions, theme) {
+  return {
+    fontWeight:
+      selectedOptions.indexOf(name) === -1
+        ? theme.typography.fontWeightRegular
+        : theme.typography.fontWeightMedium,
+  };
+}
 
 const names = [
   "Oliver Hansen",
@@ -32,38 +41,33 @@ const names = [
   "Kelly Snyder",
 ];
 
-function getStyles(name, personName, theme) {
-  return {
-    fontWeight:
-      personName.indexOf(name) === -1
-        ? theme.typography.fontWeightRegular
-        : theme.typography.fontWeightMedium,
-  };
-}
-
-export default function Select() {
+export default function Select({ onChange, options }) {
   const theme = useTheme();
-  const [personName, setPersonName] = React.useState([]);
+  const [selectedOptions, setSelectedOptions] = React.useState([]);
 
   const handleChange = (event) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
+    setSelectedOptions(
       // On autofill we get a stringified value.
       typeof value === "string" ? value.split(",") : value
     );
   };
 
+  React.useEffect(() => {
+    onChange(selectedOptions);
+  }, [selectedOptions]);
+
   return (
     <div>
       <FormControl sx={{ m: 1, width: 300 }}>
         <InputLabel id="demo-multiple-chip-label">Selección</InputLabel>
-        <Select
+        <MuiSelect
           labelId="demo-multiple-chip-label"
           id="demo-multiple-chip"
           multiple
-          value={personName}
+          value={selectedOptions}
           onChange={handleChange}
           input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
           renderValue={(selected) => (
@@ -75,16 +79,16 @@ export default function Select() {
           )}
           MenuProps={MenuProps}
         >
-          {names.map((name) => (
+          {options.map((option) => (
             <MenuItem
-              key={name}
-              value={name}
-              style={getStyles(name, personName, theme)}
+              key={option.name}
+              value={option.name}
+              style={getStyles(option.name, selectedOptions, theme)}
             >
-              {name}
+              {option.name}
             </MenuItem>
           ))}
-        </Select>
+        </MuiSelect>
       </FormControl>
     </div>
   );
